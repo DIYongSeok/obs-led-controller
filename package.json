@@ -1,0 +1,45 @@
+{
+  "name": "snuiive",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@types/express-session": "^1.17.5",
+    "axios": "^1.2.2",
+    "body-parser": "^1.19.0",
+    "cookie": "^0.4.1",
+    "cookie-parser": "^1.4.6",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "express-session": "^1.17.3",
+    "jquery": "^3.6.1",
+    "nunjucks": "^3.2.3",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "styled-components": "^5.3.6",
+    "ts-loader": "^9.4.2",
+    "obs-websocket-js": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/jquery": "^3.5.14",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.9",
+    "@types/styled-components": "^5.1.26",
+    "babel-core": "6.26.3",
+    "babel-loader": "8.2.3",
+    "babel-preset-react-app": "10.0.1",
+    "nodemon": "^2.0.15",
+    "typescript": "^4.9.3",
+    "webpack": "^5.66.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.11.1"
+  },
+  "scripts": {
+    "start" : "npx tsc && node ./dist/server/app.js",
+    "client" : "npx webpack",
+    "server" : "npx tsc && nodemon ./dist/server/app.js",
+    "dev" : "webpack serve --open --mode=development --hot",
+    "build" : "npx tsc && npx webpack"
+  }
+}

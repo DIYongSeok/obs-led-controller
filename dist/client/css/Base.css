@@ -1,0 +1,105 @@
+@import url(//cdn.jsdelivr.net/npm/font-kopub@1.0);
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'KoPub Dotum';
+}
+
+.fadeIn{
+    animation: fadein 0.5s;
+    -moz-animation: fadein 0.5s; /* Firefox */
+    -webkit-animation: fadein 0.5s; /* Safari and Chrome */
+    -o-animation: fadein 0.5s; /* Opera */
+}
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@-moz-keyframes fadein { /* Firefox */
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@-webkit-keyframes fadein { /* Safari and Chrome */
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@-o-keyframes fadein { /* Opera */
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.PopUp{
+    animation: PopUp 0.5s;
+    -moz-animation: PopUp 0.5s; /* Firefox */
+    -webkit-animation: PopUp 0.5s; /* Safari and Chrome */
+    -o-animation: PopUp 0.5s; /* Opera */
+}
+@keyframes PopUp {
+    from {
+        opacity: 0;
+        transform: translateY(2vh);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@-moz-keyframes PopUp { /* Firefox */
+    from {
+        opacity: 0;
+        transform: translateY(2vh);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@-webkit-keyframes PopUp { /* Safari and Chrome */
+    from {
+        opacity: 0;
+        transform: translateY(2vh);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@-o-keyframes PopUp { /* Opera */
+    from {
+        opacity: 0;
+        transform: translateY(2vh);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body.scrollDisable{
+    overflow-y: hidden;
+}
+
+@media (max-width: 600px) {
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+        background-color: #0d0d0d;
+    }
+}
+
