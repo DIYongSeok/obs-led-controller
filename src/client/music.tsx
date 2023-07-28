@@ -1,4 +1,3 @@
-import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import axios from 'axios';
@@ -19,20 +18,40 @@ const StyledDiv = styled.div`
 `
 
 export default function Music(){
-    const [volume, setVolume] = useState<string>();
+    const [musicSource, setMusicSource] = useState<{inputName : string, volume : number}[]>([]);
     useLayoutEffect(()=>{
         axios.get(`/music/get`).then(({data})=>{
-            setVolume(data.toString())
+            setMusicSource(data)
         })
     },[])
-    const onChangeHandler = (e : React.ChangeEvent<HTMLInputElement>)=>{
-        setVolume(e.target.value)
-        axios.post(`/music/set`, {volume : e.target.value})
-    }
+    
     return(
         <>
             <Title style={{margin : "30px"}}>음악 볼륨 조절</Title>
-            <input onChange={onChangeHandler} type="range" min="0" max="1" step="0.01" value={volume} />
+            {musicSource.map(val=><MusicSource inputName={val.inputName} volume={val.volume} />)}
         </>
+    )
+}
+
+
+const FlexDiv = styled.div`
+    display : flex;
+    flex-direction : row;
+    justify-content : space-between;
+    margin-bottom : 10px;
+`
+
+function MusicSource({inputName, volume} : {inputName : string, volume : number}){
+    const [nowvolume, setVolume] = useState<number>(volume)
+    const onChangeHandler = (e : React.ChangeEvent<HTMLInputElement>)=>{
+        setVolume(e.target.value as any)
+        axios.post(`/music/set`, {inputName , volume : e.target.value})
+    }
+    return (
+        <FlexDiv>
+            <Title style={{marginRight : "10px"}}>{inputName}</Title>
+            <input onChange={onChangeHandler} type="range" min="-60" max="0" step="0.5" value={nowvolume} />
+        </FlexDiv>
+        
     )
 }

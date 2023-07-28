@@ -16,7 +16,7 @@ const StyledDiv = styled.div`
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding: 200px 100px;
+    padding: 100px 100px;
 `
 function Controller(){
     const [scenes, setScenes] = useState<string[]>([]);
@@ -34,12 +34,15 @@ function Controller(){
                 setCurScene(scene)
             }
         })
+        //
     }
     return(
         <StyledBg>
             <StyledDiv>
                 <Title style={{marginBottom : "30px"}}>현재화면 : {curScene}</Title>
                 {scenes.map(scene=><StyledButton onClick={(e)=>{onClickHandler(scene)}} style={{margin : "30px 0"}}>{scene}</StyledButton>)}
+            </StyledDiv>
+            <StyledDiv>
                 <Music/>
             </StyledDiv>
         </StyledBg>

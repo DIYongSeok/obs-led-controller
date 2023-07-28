@@ -1,24 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const app_1 = require("../app");
 const router = express.Router();
+const app_1 = require("../app");
 let scenes = [];
-app_1.LED.connect({ address: 'localhost:5555', password: "snulive" })
-    .then(async () => {
-    const data = await app_1.LED.send('GetSceneList');
-    data.scenes.forEach(val => {
-        scenes[val.name] = val.name;
-    });
-    scenes = data.scenes.map(val => val.name);
-});
-router.get('/get', (req, res, next) => {
+app_1.LED.connect('ws://127.0.0.1:4444', "snulive");
+router.get('/get', async (req, res, next) => {
+    const data = await app_1.LED.call('GetSceneList');
+    scenes = data.scenes.map(val => val.sceneName);
     res.send(scenes);
 });
 router.post('/set', (req, res, next) => {
     const { scene } = req.body;
-    app_1.LED.send('SetCurrentScene', {
-        "scene-name": scene
+    app_1.LED.call('SetCurrentProgramScene', {
+        "sceneName": scene
     }).then(() => {
         res.send(true);
     }).catch(() => {

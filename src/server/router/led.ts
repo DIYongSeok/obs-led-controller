@@ -1,28 +1,20 @@
 
 import * as express from 'express'
-import { LED } from '../app'
 const router = express.Router()
+import { LED } from '../app'
 
 let scenes : string[] = []
-LED.connect({address: 'localhost:5555', password: "snulive"})
-.then(async ()=>{
-    const data = await LED.send('GetSceneList')
-    data.scenes.forEach(val=>{
-        scenes[val.name] = val.name
-    })
-    scenes = data.scenes.map(val=>val.name)
-    // LED.on('MediaEnded', ()=>{
-    //     LED.send('SetCurrentScene',{"scene-name" : scenes[0]})
-    // })
-})
+LED.connect('ws://127.0.0.1:4444', "snulive")
 
-router.get('/get', (req,res,next)=>{
+router.get('/get', async (req,res,next)=>{
+    const data = await LED.call('GetSceneList')
+    scenes = data.scenes.map(val=>val.sceneName) as string[]
     res.send(scenes)
 })
 router.post('/set', (req,res,next)=>{
     const {scene} = req.body
-    LED.send('SetCurrentScene',{
-        "scene-name" : scene
+    LED.call('SetCurrentProgramScene',{
+        "sceneName" : scene
     }).then(()=>{
         res.send(true)
     }).catch(()=>{

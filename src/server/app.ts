@@ -2,10 +2,9 @@ import axios from 'axios';
 import * as express from 'express';
 import * as nunjucks from 'nunjucks'
 import * as path from 'path'
+import OBSWebSocket from 'obs-websocket-js';
 
-import * as OBSWebSocket from 'obs-websocket-js'
-export const LED = new OBSWebSocket()
-
+export const LED = new OBSWebSocket();
 const TARGET = process.env.npm_lifecycle_event;
 const app = express()
 
