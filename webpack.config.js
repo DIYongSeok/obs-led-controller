@@ -5,7 +5,8 @@ const TARGET = process.env.npm_lifecycle_event;
 
 let webpackConfig= {
     entry: {
-        controller : './src/client/controller.tsx',
+        broadcast : './src/client/broadcast.tsx',
+        led : './src/client/led.tsx',
         music : './src/client/music.tsx'
     },
     output: {

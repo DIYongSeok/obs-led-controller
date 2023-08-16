@@ -39,6 +39,7 @@
     "start" : "npx tsc && node ./dist/server/app.js",
     "client" : "npx webpack",
     "server" : "npx tsc && nodemon ./dist/server/app.js",
+    "BackEnd" : "npx tsc && nodemon ./dist/server/app.js",
     "dev" : "webpack serve --open --mode=development --hot",
     "build" : "npx tsc && npx webpack",
     "watch": "npx tsc -w"

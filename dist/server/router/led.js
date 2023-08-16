@@ -3,21 +3,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const router = express.Router();
 const app_1 = require("../app");
-let scenes = [];
-app_1.LED.connect('ws://127.0.0.1:4444', "snulive");
-router.get('/get', async (req, res, next) => {
-    const data = await app_1.LED.call('GetSceneList');
-    scenes = data.scenes.map(val => val.sceneName);
-    res.send(scenes);
+app_1.LED.connect('ws://127.0.0.1:5555', "snulive");
+router.get('/', (req, res, next) => {
+    res.render('index', { reactFile: 'led' });
 });
-router.post('/set', (req, res, next) => {
+router.get('/get', async (req, res, next) => {
+    res.send(await (0, app_1.SceneGenerator)(app_1.LED));
+    (0, app_1.SceneGenerator)(app_1.BROADCAST);
+});
+router.post('/set', async (req, res, next) => {
     const { scene } = req.body;
-    app_1.LED.call('SetCurrentProgramScene', {
-        "sceneName": scene
-    }).then(() => {
+    try {
+        await app_1.LED.call('SetCurrentProgramScene', {
+            "sceneName": scene
+        });
+        if (scene.includes('브릿지영상') || scene.includes('루핑영상')) {
+            await app_1.BROADCAST.call('SetCurrentProgramScene', {
+                "sceneName": scene
+            });
+        }
         res.send(true);
-    }).catch(() => {
+    }
+    catch (err) {
         res.status(404).send(false);
-    });
+    }
 });
 exports.default = router;

@@ -1,25 +1,31 @@
 
 import * as express from 'express'
 const router = express.Router()
-import { LED } from '../app'
+import { BROADCAST, LED, SceneGenerator } from '../app'
+LED.connect('ws://127.0.0.1:5555', "snulive")
 
-let scenes : string[] = []
-LED.connect('ws://127.0.0.1:4444', "snulive")
-
-router.get('/get', async (req,res,next)=>{
-    const data = await LED.call('GetSceneList')
-    scenes = data.scenes.map(val=>val.sceneName) as string[]
-    res.send(scenes)
+router.get('/', (req, res, next)=>{
+    res.render('index', {reactFile : 'led'})
 })
-router.post('/set', (req,res,next)=>{
-    const {scene} = req.body
-    LED.call('SetCurrentProgramScene',{
-        "sceneName" : scene
-    }).then(()=>{
+router.get('/get', async (req,res,next)=>{
+    res.send(await SceneGenerator(LED))
+    SceneGenerator(BROADCAST)
+})
+router.post('/set', async (req,res,next)=>{
+    const {scene} : {scene : string} = req.body
+    try{
+        await LED.call('SetCurrentProgramScene',{
+            "sceneName" : scene
+        })
+        if(scene.includes('브릿지영상') || scene.includes('루핑영상')){
+            await BROADCAST.call('SetCurrentProgramScene',{
+                "sceneName" : scene
+            })
+        }
         res.send(true)
-    }).catch(()=>{
+    }catch(err){
         res.status(404).send(false)
-    })
+    }
 })
 
 export default router;

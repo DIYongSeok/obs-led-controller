@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import axios from 'axios';
 import {color} from './Util/Define'
-import StyledButton, { ContentButton } from './Util/Input/Button';
 import { Title } from './Util/TextStyle';
 
 const StyledBg = styled.div`
