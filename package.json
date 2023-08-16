@@ -14,11 +14,11 @@
     "express-session": "^1.17.3",
     "jquery": "^3.6.1",
     "nunjucks": "^3.2.3",
+    "obs-websocket-js": "^5.0.3",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "styled-components": "^5.3.6",
-    "ts-loader": "^9.4.2",
-    "obs-websocket-js": "^5.0.3"
+    "ts-loader": "^9.4.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
@@ -36,12 +36,12 @@
     "webpack-dev-server": "^4.11.1"
   },
   "scripts": {
-    "start" : "npx tsc && node ./dist/server/app.js",
-    "client" : "npx webpack",
-    "server" : "npx tsc && nodemon ./dist/server/app.js",
-    "BackEnd" : "npx tsc && nodemon ./dist/server/app.js",
-    "dev" : "webpack serve --open --mode=development --hot",
-    "build" : "npx tsc && npx webpack",
+    "start": "npx tsc && node ./dist/server/app.js",
+    "client": "npx webpack",
+    "server": "npx tsc && nodemon ./dist/server/app.js",
+    "BackEnd": "npx tsc && nodemon ./dist/server/app.js",
+    "dev": "webpack serve --open --mode=development --hot",
+    "build": "npx tsc && npx webpack",
     "watch": "npx tsc -w"
   }
 }

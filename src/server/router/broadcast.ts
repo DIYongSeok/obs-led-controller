@@ -1,4 +1,3 @@
-
 import * as express from 'express'
 const router = express.Router()
 import { BROADCAST, LED, SceneGenerator } from '../app'

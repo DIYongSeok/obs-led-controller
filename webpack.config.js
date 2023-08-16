@@ -30,7 +30,7 @@ let webpackConfig= {
             }],
             exclude: /node_modules/
         }]
-    }
+    },
 };
   
 module.exports = webpackConfig

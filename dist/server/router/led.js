@@ -17,7 +17,7 @@ router.post('/set', async (req, res, next) => {
         await app_1.LED.call('SetCurrentProgramScene', {
             "sceneName": scene
         });
-        if (scene.includes('브릿지영상') || scene.includes('루핑영상')) {
+        if (scene.includes('BRIDGE') || scene.includes('LOOPING')) {
             await app_1.BROADCAST.call('SetCurrentProgramScene', {
                 "sceneName": scene
             });
