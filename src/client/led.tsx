@@ -5,10 +5,8 @@ import axios from 'axios';
 import {color} from './Util/Define'
 import StyledButton, { ContentButton } from './Util/Input/Button';
 import { Title } from './Util/TextStyle';
-import Music from './music'
 import { Modal, useModal } from './Util/Modal';
 import { BottomLine } from './Util/BottomLine';
-
 const StyledBg = styled.div`
     background-color: ${color.box};
     min-height: 100vh;
@@ -21,7 +19,7 @@ const StyledDiv = styled.div`
     padding: 100px 100px;
 `
 
-const ws = new WebSocket('ws://localhost:8001/led')
+const ws = new WebSocket(`ws://${window.location.host}:8001/led`)
 function Controller(){
     const [scenes, setScenes] = useState<string[]>([]);
     const [curScene, setCurScene] = useState<string>('')
@@ -35,7 +33,7 @@ function Controller(){
     },[])
 
     const onClickHandler = (scene)=>{
-        if(!confirm('장면을 변경하시겠습니까?')) return;
+        // if(!confirm('장면을 변경하시겠습니까?')) return;
         axios.post('/led/set', {scene})
         .then(({data})=>{
             // alert('장면 변경에 성공하였습니다.')
@@ -64,10 +62,10 @@ function Controller(){
 
 function MediaModal({scenes} : {scenes : string[]}){
     const onClickHandler = (scene)=>{
-        if(!confirm('장면을 변경하시겠습니까?')) return;
+        // if(!confirm('장면을 변경하시겠습니까?')) return;
         axios.post('/led/set', {scene})
         .then(({data})=>{
-            // alert('장면 변경에 성공하였습니다.')
+            // alert('장면 변경에 성공하였습니다.') //
         })
     }
     return (

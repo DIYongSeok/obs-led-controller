@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const router = express.Router();
 const app_1 = require("../app");
-app_1.BROADCAST.connect('ws://127.0.0.1:4444', "snulive");
 router.get('/', (req, res, next) => {
     res.render('index', { reactFile: 'broadcast' });
 });

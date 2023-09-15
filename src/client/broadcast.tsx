@@ -19,7 +19,7 @@ const StyledDiv = styled.div`
     flex-direction: column;
     padding: 100px 100px;
 `
-const ws = new WebSocket('ws://localhost:8001/broadcast')
+const ws = new WebSocket(`ws://${window.location.host}/broadcast`)
 function Controller(){
     const [scenes, setScenes] = useState<string[]>([]);
     const [curScene, setCurScene] = useState<string>('')

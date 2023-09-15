@@ -8,10 +8,27 @@ const path = require("path");
 const fs = require("fs");
 const obs_websocket_js_1 = require("obs-websocket-js");
 exports.LED = new obs_websocket_js_1.default();
+(async function init() {
+    try {
+        await exports.LED.connect('ws://localhost:5555', "snulive");
+        await exports.BROADCAST.connect('ws://localhost:4444', "snulive");
+        exports.LED.on('CurrentProgramSceneChanged', async ({ sceneName }) => {
+            if (sceneName.includes('BRIDGE') || sceneName.includes('LOOPING')) {
+                await exports.BROADCAST.call('SetCurrentProgramScene', { sceneName });
+            }
+            else {
+                await exports.BROADCAST.call('SetCurrentProgramScene', { sceneName: "카메라 화면 - 풀샷" });
+            }
+        });
+    }
+    catch (err) {
+        console.error(err);
+    }
+})();
 exports.BROADCAST = new obs_websocket_js_1.default();
 exports.PATH = {
-    BRIDGE: 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/230818 - Junction Asia/temp/브릿지영상',
-    LOOPING: 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/230818 - Junction Asia/temp/루핑영상'
+    BRIDGE: 'C:/Users/dydtj/Desktop/중계파일/230906 - 문화예술원/BRIDGE',
+    LOOPING: 'C:/Users/dydtj/Desktop/중계파일/230906 - 문화예술원/LOOPING'
 };
 const SceneGenerator = async (OBS) => {
     const data = await OBS.call('GetSceneList');
@@ -36,14 +53,21 @@ const SceneGenerator = async (OBS) => {
                     "looping": key == 'LOOPING'
                 }
             });
+            if (key == 'LOOPING' && OBS == exports.BROADCAST) {
+                await OBS.call('DuplicateSceneItem', {
+                    sceneName: 'PIP',
+                    destinationSceneName: sceneName,
+                    sceneItemId: 1
+                });
+            }
             if (OBS == exports.LED) {
                 await OBS.call('CreateSourceFilter', {
                     sourceName: videoName,
                     filterKind: "audio_monitor",
                     filterName: "Audio Monitor",
                     filterSettings: {
-                        "device": "{0.0.0.00000000}.{a8c5e1b3-78d5-4230-bee4-b9597f0013b1}",
-                        "deviceName": "스피커(Realtek USB Audio)"
+                        "deviceName": "스피커(Realtek(R) Audio)",
+                        "device": "{0.0.0.00000000}.{23d43edf-c25a-4d6b-b3c9-7a5abcf7679d}"
                     }
                 });
             }

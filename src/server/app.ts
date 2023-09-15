@@ -6,15 +6,41 @@ import * as fs from 'fs'
 import OBSWebSocket from 'obs-websocket-js';
 
 export const LED = new OBSWebSocket();
+(async function init(){
+    try{
+        await LED.connect('ws://localhost:5555', "snulive")
+        await BROADCAST.connect('ws://localhost:4444', "snulive")
+        LED.on('CurrentProgramSceneChanged', async ({sceneName})=>{
+            if (sceneName.includes('BRIDGE') || sceneName.includes('LOOPING')) {
+                await BROADCAST.call('SetCurrentProgramScene', {sceneName})
+                // await BROADCAST.call('SetCurrentPreviewScene', {sceneName : "카메라 화면 - 풀샷"})
+            }
+            else{
+                // const {currentPreviewSceneName} = await BROADCAST.call('GetCurrentPreviewScene')
+                // if(['카메라 화면 - 풀샷', '카메라 화면 - 클로즈샷', 'PIP'].includes(currentPreviewSceneName)){
+                //     await BROADCAST.call('SetCurrentProgramScene', {sceneName : currentPreviewSceneName})
+                //     await BROADCAST.call('SetCurrentPreviewScene', {sceneName : "카메라 화면 - 풀샷"})
+                // }else{
+                //     await BROADCAST.call('SetCurrentProgramScene', {sceneName : '카메라 화면 - 풀샷'})
+                    
+                // }
+                await BROADCAST.call('SetCurrentProgramScene', {sceneName : "카메라 화면 - 풀샷"})
+                // await BROADCAST.call('SetCurrentProgramScene', {sceneName : "컴퓨터화면"})
+            }
+        })
+    }catch(err){console.error(err)}
+    
+})()
 export const BROADCAST = new OBSWebSocket();
 export const PATH = {
-    BRIDGE : 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/230818 - Junction Asia/temp/브릿지영상',
-    LOOPING : 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/230818 - Junction Asia/temp/루핑영상'
+    BRIDGE : 'C:/Users/dydtj/Desktop/중계파일/230906 - 문화예술원/BRIDGE',
+    LOOPING : 'C:/Users/dydtj/Desktop/중계파일/230906 - 문화예술원/LOOPING'
 }
 export const SceneGenerator = async (OBS : OBSWebSocket)=>{
     const data = await OBS.call('GetSceneList')
     let scenes = data.scenes.map(val=>val.sceneName) as string[]
     let deleteSceneList = scenes.filter(val=>val.includes('BRIDGE') || val.includes('LOOPING'))
+    // const {sceneItemTransform} = OBS == LED ? await OBS.call('GetSceneItemTransform', {sceneName : "컴퓨터화면", sceneItemId : 2}) : {sceneItemTransform : {}}
     for(let key of Object.keys(PATH)){
         for(let videoName of fs.readdirSync(PATH[key])){
             const sceneName = `[${key}] ${videoName.split('.')[0]}`
@@ -22,7 +48,7 @@ export const SceneGenerator = async (OBS : OBSWebSocket)=>{
             if(scenes.includes(sceneName)) continue;
             await OBS.call('CreateScene', {
                 sceneName: sceneName
-            })
+            })  
             scenes = [sceneName, ...scenes]
             await OBS.call('CreateInput', {
                 sceneName: sceneName,
@@ -33,16 +59,30 @@ export const SceneGenerator = async (OBS : OBSWebSocket)=>{
                     "looping" : key=='LOOPING'
                 }
             })
+            if(key == 'LOOPING' && OBS == BROADCAST){
+                await OBS.call('DuplicateSceneItem', {
+                    sceneName: 'PIP',
+                    destinationSceneName : sceneName,
+                    sceneItemId : 1
+                })
+            }
             if(OBS == LED){
                 await OBS.call('CreateSourceFilter', {
                     sourceName: videoName,
                     filterKind: "audio_monitor",
                     filterName: "Audio Monitor",
                     filterSettings: {
-                        "device": "{0.0.0.00000000}.{a8c5e1b3-78d5-4230-bee4-b9597f0013b1}",
-                        "deviceName": "스피커(Realtek USB Audio)"
+                        "deviceName": "스피커(Realtek(R) Audio)",
+                        "device": "{0.0.0.00000000}.{23d43edf-c25a-4d6b-b3c9-7a5abcf7679d}"
                     }
                 })
+                
+                // await OBS.call('SetSceneItemTransform', {sceneName, sceneItemId : 1, sceneItemTransform})
+                // await OBS.call('DuplicateSceneItem', {
+                //     sceneName: '컴퓨터화면',
+                //     destinationSceneName : sceneName,
+                //     sceneItemId : 3
+                // })
             }
         }
     }
@@ -69,7 +109,7 @@ app.get('/js/:fileName', (req, res, next)=>{
         axios.get(`http://localhost:8080/${req.params.fileName}`)
         .then(({data})=>{
             res.send(data)
-        })
+        })  
     }else{
         res.sendFile(path.join(__dirname, `../client/js/${req.params.fileName}`))
     }
