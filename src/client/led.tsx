@@ -7,6 +7,7 @@ import StyledButton, { ContentButton } from './Util/Input/Button';
 import { Title } from './Util/TextStyle';
 import { Modal, useModal } from './Util/Modal';
 import { BottomLine } from './Util/BottomLine';
+import Music from './music';
 const StyledBg = styled.div`
     background-color: ${color.box};
     min-height: 100vh;
@@ -49,12 +50,11 @@ function Controller(){
                 <Title style={{marginBottom : "30px"}}>현재화면 : {curScene}</Title>
                 {scenes.filter(scene=>!scene.includes('BRIDGE') && !scene.includes('LOOPING')).map(scene=><StyledButton onClick={(e)=>{onClickHandler(scene)}} style={{margin : "30px 0"}}>{scene}</StyledButton>)}
                 <BottomLine width='300px' style={{borderWidth : "1px", borderColor : "white", margin : "30px 30px"}}/>
-                <StyledButton onClick={(e)=>{modalHandler(<MediaModal scenes={scenes.filter(scene=>scene.includes('BRIDGE'))}/>)}} style={{margin : "30px 0"}}>브릿지영상</StyledButton>
-                <StyledButton onClick={(e)=>{modalHandler(<MediaModal scenes={scenes.filter(scene=>scene.includes('LOOPING'))}/>)}} style={{margin : "30px 0"}}>루핑영상</StyledButton>
+                <StyledButton onClick={(e)=>{modalHandler(<MediaModal scenes={scenes.filter(scene=>scene.includes('BRIDGE'))}/>)}} style={{margin : "30px 0"}}>브릿지</StyledButton>
             </StyledDiv>
-            {/* <StyledDiv>
+            <StyledDiv>
                 <Music/>
-            </StyledDiv> */}
+            </StyledDiv>
         </StyledBg>
     )
 }

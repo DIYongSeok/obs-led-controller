@@ -7,10 +7,10 @@ router.get('/', (req, res, next) => {
     res.render('index', { reactFile: 'music' });
 });
 router.get('/get', async (req, res, next) => {
-    app_1.LED.call('GetInputList', { inputKind: "ffmpeg_source" })
+    app_1.BROADCAST.call('GetInputList', { inputKind: "ffmpeg_source" })
         .then(async (data) => {
         const result = await Promise.all(data.inputs.map(async (val) => {
-            const volume = (await app_1.LED.call('GetInputVolume', { inputName: val.inputName })).inputVolumeDb;
+            const volume = (await app_1.BROADCAST.call('GetInputVolume', { inputName: val.inputName })).inputVolumeDb;
             return { inputName: val.inputName, volume };
         }));
         res.send(result);
@@ -21,7 +21,7 @@ router.get('/get', async (req, res, next) => {
 });
 router.post('/set', (req, res, next) => {
     const { volume, inputName } = req.body;
-    app_1.LED.call('SetInputVolume', { inputName, inputVolumeDb: parseFloat(volume) });
+    app_1.BROADCAST.call('SetInputVolume', { inputName, inputVolumeDb: parseFloat(volume) });
     res.end();
 });
 exports.default = router;

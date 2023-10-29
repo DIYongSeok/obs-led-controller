@@ -11,21 +11,11 @@ export const LED = new OBSWebSocket();
         await LED.connect('ws://localhost:5555', "snulive")
         await BROADCAST.connect('ws://localhost:4444', "snulive")
         LED.on('CurrentProgramSceneChanged', async ({sceneName})=>{
-            if (sceneName.includes('BRIDGE') || sceneName.includes('LOOPING')) {
+            if (sceneName.includes('BRIDGE')) {
                 await BROADCAST.call('SetCurrentProgramScene', {sceneName})
-                // await BROADCAST.call('SetCurrentPreviewScene', {sceneName : "카메라 화면 - 풀샷"})
             }
             else{
-                // const {currentPreviewSceneName} = await BROADCAST.call('GetCurrentPreviewScene')
-                // if(['카메라 화면 - 풀샷', '카메라 화면 - 클로즈샷', 'PIP'].includes(currentPreviewSceneName)){
-                //     await BROADCAST.call('SetCurrentProgramScene', {sceneName : currentPreviewSceneName})
-                //     await BROADCAST.call('SetCurrentPreviewScene', {sceneName : "카메라 화면 - 풀샷"})
-                // }else{
-                //     await BROADCAST.call('SetCurrentProgramScene', {sceneName : '카메라 화면 - 풀샷'})
-                    
-                // }
                 await BROADCAST.call('SetCurrentProgramScene', {sceneName : "카메라 화면 - 풀샷"})
-                // await BROADCAST.call('SetCurrentProgramScene', {sceneName : "컴퓨터화면"})
             }
         })
     }catch(err){console.error(err)}
@@ -33,17 +23,15 @@ export const LED = new OBSWebSocket();
 })()
 export const BROADCAST = new OBSWebSocket();
 export const PATH = {
-    BRIDGE : 'C:/Users/dydtj/Desktop/중계파일/230906 - 문화예술원/BRIDGE',
-    LOOPING : 'C:/Users/dydtj/Desktop/중계파일/230906 - 문화예술원/LOOPING'
+    BRIDGE : 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/231030 - 서울대 제도혁신위원회/디자인/출력/간지',
 }
 export const SceneGenerator = async (OBS : OBSWebSocket)=>{
     const data = await OBS.call('GetSceneList')
     let scenes = data.scenes.map(val=>val.sceneName) as string[]
-    let deleteSceneList = scenes.filter(val=>val.includes('BRIDGE') || val.includes('LOOPING'))
-    // const {sceneItemTransform} = OBS == LED ? await OBS.call('GetSceneItemTransform', {sceneName : "컴퓨터화면", sceneItemId : 2}) : {sceneItemTransform : {}}
+    let deleteSceneList = scenes.filter(val=>val.includes('BRIDGE'))
     for(let key of Object.keys(PATH)){
-        for(let videoName of fs.readdirSync(PATH[key])){
-            const sceneName = `[${key}] ${videoName.split('.')[0]}`
+        for(let fileName of fs.readdirSync(PATH[key])){
+            const sceneName = `[${key}] ${fileName.split('.')[0]}`
             deleteSceneList = deleteSceneList.filter(val=>val != sceneName)
             if(scenes.includes(sceneName)) continue;
             await OBS.call('CreateScene', {
@@ -52,38 +40,12 @@ export const SceneGenerator = async (OBS : OBSWebSocket)=>{
             scenes = [sceneName, ...scenes]
             await OBS.call('CreateInput', {
                 sceneName: sceneName,
-                inputName: videoName,
-                inputKind: "ffmpeg_source",
+                inputName: fileName,
+                inputKind: "image_source",
                 inputSettings: {
-                    "local_file": `${PATH[key]}/${videoName}`,
-                    "looping" : key=='LOOPING'
+                    "file": `${PATH[key]}/${fileName}`,
                 }
             })
-            if(key == 'LOOPING' && OBS == BROADCAST){
-                await OBS.call('DuplicateSceneItem', {
-                    sceneName: 'PIP',
-                    destinationSceneName : sceneName,
-                    sceneItemId : 1
-                })
-            }
-            if(OBS == LED){
-                await OBS.call('CreateSourceFilter', {
-                    sourceName: videoName,
-                    filterKind: "audio_monitor",
-                    filterName: "Audio Monitor",
-                    filterSettings: {
-                        "deviceName": "스피커(Realtek(R) Audio)",
-                        "device": "{0.0.0.00000000}.{23d43edf-c25a-4d6b-b3c9-7a5abcf7679d}"
-                    }
-                })
-                
-                // await OBS.call('SetSceneItemTransform', {sceneName, sceneItemId : 1, sceneItemTransform})
-                // await OBS.call('DuplicateSceneItem', {
-                //     sceneName: '컴퓨터화면',
-                //     destinationSceneName : sceneName,
-                //     sceneItemId : 3
-                // })
-            }
         }
     }
 

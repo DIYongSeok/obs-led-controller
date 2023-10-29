@@ -13,7 +13,7 @@ exports.LED = new obs_websocket_js_1.default();
         await exports.LED.connect('ws://localhost:5555', "snulive");
         await exports.BROADCAST.connect('ws://localhost:4444', "snulive");
         exports.LED.on('CurrentProgramSceneChanged', async ({ sceneName }) => {
-            if (sceneName.includes('BRIDGE') || sceneName.includes('LOOPING')) {
+            if (sceneName.includes('BRIDGE')) {
                 await exports.BROADCAST.call('SetCurrentProgramScene', { sceneName });
             }
             else {
@@ -27,16 +27,15 @@ exports.LED = new obs_websocket_js_1.default();
 })();
 exports.BROADCAST = new obs_websocket_js_1.default();
 exports.PATH = {
-    BRIDGE: 'C:/Users/dydtj/Desktop/중계파일/230906 - 문화예술원/BRIDGE',
-    LOOPING: 'C:/Users/dydtj/Desktop/중계파일/230906 - 문화예술원/LOOPING'
+    BRIDGE: 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/231030 - 서울대 제도혁신위원회/디자인/출력/간지',
 };
 const SceneGenerator = async (OBS) => {
     const data = await OBS.call('GetSceneList');
     let scenes = data.scenes.map(val => val.sceneName);
-    let deleteSceneList = scenes.filter(val => val.includes('BRIDGE') || val.includes('LOOPING'));
+    let deleteSceneList = scenes.filter(val => val.includes('BRIDGE'));
     for (let key of Object.keys(exports.PATH)) {
-        for (let videoName of fs.readdirSync(exports.PATH[key])) {
-            const sceneName = `[${key}] ${videoName.split('.')[0]}`;
+        for (let fileName of fs.readdirSync(exports.PATH[key])) {
+            const sceneName = `[${key}] ${fileName.split('.')[0]}`;
             deleteSceneList = deleteSceneList.filter(val => val != sceneName);
             if (scenes.includes(sceneName))
                 continue;
@@ -46,31 +45,12 @@ const SceneGenerator = async (OBS) => {
             scenes = [sceneName, ...scenes];
             await OBS.call('CreateInput', {
                 sceneName: sceneName,
-                inputName: videoName,
-                inputKind: "ffmpeg_source",
+                inputName: fileName,
+                inputKind: "image_source",
                 inputSettings: {
-                    "local_file": `${exports.PATH[key]}/${videoName}`,
-                    "looping": key == 'LOOPING'
+                    "file": `${exports.PATH[key]}/${fileName}`,
                 }
             });
-            if (key == 'LOOPING' && OBS == exports.BROADCAST) {
-                await OBS.call('DuplicateSceneItem', {
-                    sceneName: 'PIP',
-                    destinationSceneName: sceneName,
-                    sceneItemId: 1
-                });
-            }
-            if (OBS == exports.LED) {
-                await OBS.call('CreateSourceFilter', {
-                    sourceName: videoName,
-                    filterKind: "audio_monitor",
-                    filterName: "Audio Monitor",
-                    filterSettings: {
-                        "deviceName": "스피커(Realtek(R) Audio)",
-                        "device": "{0.0.0.00000000}.{23d43edf-c25a-4d6b-b3c9-7a5abcf7679d}"
-                    }
-                });
-            }
         }
     }
     for (let deleteScene of deleteSceneList) {
