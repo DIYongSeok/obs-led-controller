@@ -4,49 +4,58 @@ import * as nunjucks from 'nunjucks'
 import * as path from 'path'
 import * as fs from 'fs'
 import OBSWebSocket from 'obs-websocket-js';
-import {ADDRESS, NEXT_SCENE, PASSWORD, PATH, PORT, SCENE_TYPE} from './util/constants'
+import {ADDRESS, INPUT_TYPE, NEXT_SCENE, PASSWORD, PATH, PORT, SCENE_TYPE, TYPE_OF_SCENE} from './util/constants'
 
 export const LED = new OBSWebSocket();
+export const BROADCAST = new OBSWebSocket();
 (async function init(){
     try{
         await LED.connect(ADDRESS.LED, PASSWORD.LED)
         await BROADCAST.connect(ADDRESS.BROADCAST, PASSWORD.BROADCAST)
         LED.on('CurrentProgramSceneChanged', async ({sceneName})=>{
-            if (sceneName.includes(SCENE_TYPE.BRIDGE)) {
-                await BROADCAST.call('SetCurrentProgramScene', {sceneName})
-            }
-            else{
-                try{await BROADCAST.call('SetCurrentProgramScene', {sceneName : NEXT_SCENE.BRIDGE})}
-                catch(err){console.error(err)}
+            try{
+                if (sceneName.includes(SCENE_TYPE.BRIDGE) || sceneName.includes(SCENE_TYPE.VIDEO)) {
+                    await BROADCAST.call('SetCurrentProgramScene', {sceneName})
+                }
+                else{
+                    await BROADCAST.call('SetCurrentProgramScene', {sceneName : NEXT_SCENE.BRIDGE}) // you can cutomize next scene
+                }
+            }catch(err){
+                console.error(err)
             }
         })
     }catch(err){console.error(err)}
-    
 })()
-export const BROADCAST = new OBSWebSocket();
+
 
 export const SceneGenerator = async (OBS : OBSWebSocket)=>{
     const data = await OBS.call('GetSceneList')
     let scenes = data.scenes.map(val=>val.sceneName) as string[]
     let deleteSceneList = scenes.filter(val=>val.includes(SCENE_TYPE.BRIDGE))
     for(let key of Object.keys(PATH)){
-        for(let fileName of fs.readdirSync(PATH[key])){
-            const sceneName = `[${key}] ${fileName.split('.')[0]}`
-            deleteSceneList = deleteSceneList.filter(val=>val != sceneName)
-            if(scenes.includes(sceneName)) continue;
-            await OBS.call('CreateScene', {
-                sceneName: sceneName
-            })  
-            scenes = [sceneName, ...scenes]
-            await OBS.call('CreateInput', {
-                sceneName: sceneName,
-                inputName: fileName,
-                inputKind: "image_source",
-                inputSettings: {
-                    "file": `${PATH[key]}/${fileName}`,
-                }
-            })
-            //BROADCAST needs creation of sound source 
+        try{
+            for(let fileName of fs.readdirSync(PATH[key])){
+                const sceneName = `[${key}] ${fileName.split('.')[0]}`
+                deleteSceneList = deleteSceneList.filter(val=>val != sceneName)
+                if(scenes.includes(sceneName)) continue;
+                await OBS.call('CreateScene', {
+                    sceneName: sceneName
+                })  
+                scenes = [sceneName, ...scenes]
+                await OBS.call('CreateInput', {
+                    sceneName: sceneName,
+                    inputName: fileName,
+                    inputKind: INPUT_TYPE[key],
+                    inputSettings: {
+                        "file": `${PATH[key]}/${fileName}`,
+                        "local_file": `${PATH[key]}/${fileName}`,
+                    }
+                })
+                //BROADCAST needs creation of sound source 
+            }
+        }
+        catch(err){
+            console.error(err)
         }
     }
 

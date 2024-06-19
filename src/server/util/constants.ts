@@ -13,16 +13,24 @@ export const PORT = {
     WEBPACK : 8080
 }
 
-type TYPE_OF_SCENE = "BRIDGE"
+export type TYPE_OF_SCENE = "BRIDGE" | "VIDEO"
 
 export const SCENE_TYPE : {[key in TYPE_OF_SCENE] : TYPE_OF_SCENE} = {
-    BRIDGE : 'BRIDGE'
+    BRIDGE : 'BRIDGE',
+    VIDEO : 'VIDEO'
 }
 
 export const NEXT_SCENE : {[key in TYPE_OF_SCENE] : string} = {
-    BRIDGE : '카메라 화면 - 풀샷'
+    BRIDGE : '카메라 화면 - 풀샷',
+    VIDEO : '카메라 화면 - 풀샷'
 }
 
 export const PATH : {[key in TYPE_OF_SCENE] : string} = {
-    BRIDGE : 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/231030 - 서울대 제도혁신위원회/디자인/출력/간지',
+    BRIDGE : 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/230818 - Junction Asia/temp/브릿지영상', //route for bridge image
+    VIDEO : 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/230818 - Junction Asia/temp/루핑영상' //route for bridge video
+}
+
+export const INPUT_TYPE : {[key in TYPE_OF_SCENE] : string} = {
+    BRIDGE : 'image_source',
+    VIDEO : 'ffmpeg_source'
 }

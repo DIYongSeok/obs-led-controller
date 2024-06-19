@@ -9,21 +9,22 @@ const fs = require("fs");
 const obs_websocket_js_1 = require("obs-websocket-js");
 const constants_1 = require("./util/constants");
 exports.LED = new obs_websocket_js_1.default();
+exports.BROADCAST = new obs_websocket_js_1.default();
 (async function init() {
     try {
         await exports.LED.connect(constants_1.ADDRESS.LED, constants_1.PASSWORD.LED);
         await exports.BROADCAST.connect(constants_1.ADDRESS.BROADCAST, constants_1.PASSWORD.BROADCAST);
         exports.LED.on('CurrentProgramSceneChanged', async ({ sceneName }) => {
-            if (sceneName.includes(constants_1.SCENE_TYPE.BRIDGE)) {
-                await exports.BROADCAST.call('SetCurrentProgramScene', { sceneName });
-            }
-            else {
-                try {
+            try {
+                if (sceneName.includes(constants_1.SCENE_TYPE.BRIDGE) || sceneName.includes(constants_1.SCENE_TYPE.VIDEO)) {
+                    await exports.BROADCAST.call('SetCurrentProgramScene', { sceneName });
+                }
+                else {
                     await exports.BROADCAST.call('SetCurrentProgramScene', { sceneName: constants_1.NEXT_SCENE.BRIDGE });
                 }
-                catch (err) {
-                    console.error(err);
-                }
+            }
+            catch (err) {
+                console.error(err);
             }
         });
     }
@@ -31,29 +32,34 @@ exports.LED = new obs_websocket_js_1.default();
         console.error(err);
     }
 })();
-exports.BROADCAST = new obs_websocket_js_1.default();
 const SceneGenerator = async (OBS) => {
     const data = await OBS.call('GetSceneList');
     let scenes = data.scenes.map(val => val.sceneName);
     let deleteSceneList = scenes.filter(val => val.includes(constants_1.SCENE_TYPE.BRIDGE));
     for (let key of Object.keys(constants_1.PATH)) {
-        for (let fileName of fs.readdirSync(constants_1.PATH[key])) {
-            const sceneName = `[${key}] ${fileName.split('.')[0]}`;
-            deleteSceneList = deleteSceneList.filter(val => val != sceneName);
-            if (scenes.includes(sceneName))
-                continue;
-            await OBS.call('CreateScene', {
-                sceneName: sceneName
-            });
-            scenes = [sceneName, ...scenes];
-            await OBS.call('CreateInput', {
-                sceneName: sceneName,
-                inputName: fileName,
-                inputKind: "image_source",
-                inputSettings: {
-                    "file": `${constants_1.PATH[key]}/${fileName}`,
-                }
-            });
+        try {
+            for (let fileName of fs.readdirSync(constants_1.PATH[key])) {
+                const sceneName = `[${key}] ${fileName.split('.')[0]}`;
+                deleteSceneList = deleteSceneList.filter(val => val != sceneName);
+                if (scenes.includes(sceneName))
+                    continue;
+                await OBS.call('CreateScene', {
+                    sceneName: sceneName
+                });
+                scenes = [sceneName, ...scenes];
+                await OBS.call('CreateInput', {
+                    sceneName: sceneName,
+                    inputName: fileName,
+                    inputKind: constants_1.INPUT_TYPE[key],
+                    inputSettings: {
+                        "file": `${constants_1.PATH[key]}/${fileName}`,
+                        "local_file": `${constants_1.PATH[key]}/${fileName}`,
+                    }
+                });
+            }
+        }
+        catch (err) {
+            console.error(err);
         }
     }
     for (let deleteScene of deleteSceneList) {

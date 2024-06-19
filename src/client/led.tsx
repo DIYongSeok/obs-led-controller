@@ -8,6 +8,8 @@ import { Title } from './Util/TextStyle';
 import { Modal, useModal } from './Util/Modal';
 import { BottomLine } from './Util/BottomLine';
 import Music from './music';
+import { PORT, SCENE_TYPE } from '../server/util/constants';
+
 const StyledBg = styled.div`
     background-color: ${color.box};
     min-height: 100vh;
@@ -20,7 +22,7 @@ const StyledDiv = styled.div`
     padding: 100px 100px;
 `
 
-const ws = new WebSocket(`ws://${window.location.host}:8001/led`)
+const ws = new WebSocket(`ws://${window.location.host}:${PORT.WEBSOCKET}/led`)
 function Controller(){
     const [scenes, setScenes] = useState<string[]>([]);
     const [curScene, setCurScene] = useState<string>('')
@@ -48,9 +50,11 @@ function Controller(){
             <Modal content={content} color={color.box} onClick={modalHandler}/>
             <StyledDiv>
                 <Title style={{marginBottom : "30px"}}>현재화면 : {curScene}</Title>
-                {scenes.filter(scene=>!scene.includes('BRIDGE') && !scene.includes('LOOPING')).map(scene=><StyledButton onClick={(e)=>{onClickHandler(scene)}} style={{margin : "30px 0"}}>{scene}</StyledButton>)}
+                {scenes.filter(scene=> !Object.keys(SCENE_TYPE).filter(key => scene.includes(key)).length ).map(scene=><StyledButton onClick={(e)=>{onClickHandler(scene)}} style={{margin : "30px 0"}}>{scene}</StyledButton>)}
                 <BottomLine width='300px' style={{borderWidth : "1px", borderColor : "white", margin : "30px 30px"}}/>
-                <StyledButton onClick={(e)=>{modalHandler(<MediaModal scenes={scenes.filter(scene=>scene.includes('BRIDGE'))}/>)}} style={{margin : "30px 0"}}>브릿지</StyledButton>
+                {Object.keys(SCENE_TYPE).map(key=>
+                    <StyledButton onClick={(e)=>{modalHandler(<MediaModal scenes={scenes.filter(scene=>scene.includes(key))}/>)}} style={{margin : "30px 0"}}>{key}</StyledButton>
+                )}
             </StyledDiv>
             <StyledDiv>
                 <Music/>
