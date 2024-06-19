@@ -6,10 +6,11 @@ const express = require("express");
 const nunjucks = require("nunjucks");
 const path = require("path");
 const obs_websocket_js_1 = require("obs-websocket-js");
+const constants_1 = require("./util/constants");
 exports.BROADCAST = new obs_websocket_js_1.default();
 (async function init() {
     try {
-        await exports.BROADCAST.connect('ws://localhost:4444', "snulive");
+        await exports.BROADCAST.connect(constants_1.ADDRESS.BROADCASAT, constants_1.PASSWORD.BROADCAST);
     }
     catch (err) {
         console.error(err);
@@ -32,7 +33,7 @@ nunjucks.configure('./dist/client/html', {
 });
 app.get('/js/:fileName', (req, res, next) => {
     if (TARGET == "server" || TARGET == "BackEnd") {
-        axios_1.default.get(`http://localhost:8080/${req.params.fileName}`)
+        axios_1.default.get(`http://localhost:${constants_1.PORT.WEBPACK}/${req.params.fileName}`)
             .then(({ data }) => {
             res.send(data);
         });
@@ -51,9 +52,9 @@ const broadcast_1 = require("./router/broadcast");
 app.use('/broadcast', broadcast_1.default);
 const music_1 = require("./router/music");
 app.use('/music', music_1.default);
-app.listen(80, () => { });
+app.listen(constants_1.PORT.SERVER, () => { });
 const ws_1 = require("ws");
-const wsBroadcast = new ws_1.WebSocketServer({ port: 8001 });
+const wsBroadcast = new ws_1.WebSocketServer({ port: constants_1.PORT.WEBSOCKET });
 wsBroadcast.on("connection", (ws, req) => {
     exports.BROADCAST.call('GetCurrentProgramScene').then(result => {
         setTimeout(() => {

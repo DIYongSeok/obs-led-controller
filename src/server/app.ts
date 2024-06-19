@@ -3,11 +3,12 @@ import * as express from 'express';
 import * as nunjucks from 'nunjucks'
 import * as path from 'path'
 import OBSWebSocket from 'obs-websocket-js';
+import {ADDRESS, PASSWORD, PORT} from './util/constants'
 
 export const BROADCAST = new OBSWebSocket();
 (async function init(){
     try{
-        await BROADCAST.connect('ws://localhost:4444', "snulive")
+        await BROADCAST.connect(ADDRESS.BROADCASAT, PASSWORD.BROADCAST)
     }catch(err){console.error(err)}
     
 })()
@@ -30,7 +31,7 @@ nunjucks.configure('./dist/client/html', {
 
 app.get('/js/:fileName', (req, res, next)=>{
     if(TARGET == "server" || TARGET == "BackEnd"){
-        axios.get(`http://localhost:8080/${req.params.fileName}`)
+        axios.get(`http://localhost:${PORT.WEBPACK}/${req.params.fileName}`)
         .then(({data})=>{
             res.send(data)
         })  
@@ -51,12 +52,12 @@ import broadcast from './router/broadcast'
 app.use('/broadcast', broadcast)
 import music from './router/music'
 app.use('/music', music)
-app.listen(80, () => {})
+app.listen(PORT.SERVER, () => {})
 
 
 
 import {WebSocketServer} from 'ws'
-const wsBroadcast = new WebSocketServer({port : 8001})
+const wsBroadcast = new WebSocketServer({port : PORT.WEBSOCKET})
 wsBroadcast.on("connection", (ws, req)=>{
     BROADCAST.call('GetCurrentProgramScene').then(result=>{
         setTimeout(()=>{
