@@ -4,31 +4,31 @@ import * as nunjucks from 'nunjucks'
 import * as path from 'path'
 import * as fs from 'fs'
 import OBSWebSocket from 'obs-websocket-js';
+import {ADDRESS, NEXT_SCENE, PASSWORD, PATH, PORT, SCENE_TYPE} from './util/constants'
 
 export const LED = new OBSWebSocket();
 (async function init(){
     try{
-        await LED.connect('ws://localhost:5555', "snulive")
-        await BROADCAST.connect('ws://localhost:4444', "snulive")
+        await LED.connect(ADDRESS.LED, PASSWORD.LED)
+        await BROADCAST.connect(ADDRESS.BROADCAST, PASSWORD.BROADCAST)
         LED.on('CurrentProgramSceneChanged', async ({sceneName})=>{
-            if (sceneName.includes('BRIDGE')) {
+            if (sceneName.includes(SCENE_TYPE.BRIDGE)) {
                 await BROADCAST.call('SetCurrentProgramScene', {sceneName})
             }
             else{
-                await BROADCAST.call('SetCurrentProgramScene', {sceneName : "카메라 화면 - 풀샷"})
+                try{await BROADCAST.call('SetCurrentProgramScene', {sceneName : NEXT_SCENE.BRIDGE})}
+                catch(err){console.error(err)}
             }
         })
     }catch(err){console.error(err)}
     
 })()
 export const BROADCAST = new OBSWebSocket();
-export const PATH = {
-    BRIDGE : 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/231030 - 서울대 제도혁신위원회/디자인/출력/간지',
-}
+
 export const SceneGenerator = async (OBS : OBSWebSocket)=>{
     const data = await OBS.call('GetSceneList')
     let scenes = data.scenes.map(val=>val.sceneName) as string[]
-    let deleteSceneList = scenes.filter(val=>val.includes('BRIDGE'))
+    let deleteSceneList = scenes.filter(val=>val.includes(SCENE_TYPE.BRIDGE))
     for(let key of Object.keys(PATH)){
         for(let fileName of fs.readdirSync(PATH[key])){
             const sceneName = `[${key}] ${fileName.split('.')[0]}`
@@ -46,6 +46,7 @@ export const SceneGenerator = async (OBS : OBSWebSocket)=>{
                     "file": `${PATH[key]}/${fileName}`,
                 }
             })
+            //BROADCAST needs creation of sound source 
         }
     }
 
@@ -68,7 +69,7 @@ nunjucks.configure('./dist/client/html', {
 
 app.get('/js/:fileName', (req, res, next)=>{
     if(TARGET == "server" || TARGET == "BackEnd"){
-        axios.get(`http://localhost:8080/${req.params.fileName}`)
+        axios.get(`http://localhost:${PORT.WEBPACK}/${req.params.fileName}`)
         .then(({data})=>{
             res.send(data)
         })  
@@ -93,12 +94,12 @@ app.use('/broadcast', broadcast)
 import music from './router/music'
 app.use('/music', music)
 
-app.listen(80, () => {})
+app.listen(PORT.SERVER, () => {})
 
 
 
 import {WebSocketServer} from 'ws'
-const wsBroadcast = new WebSocketServer({port : 8001})
+const wsBroadcast = new WebSocketServer({port : PORT.WEBSOCKET})
 wsBroadcast.on("connection", (ws, req)=>{
     if(req.url.includes('broadcast')){
         BROADCAST.call('GetCurrentProgramScene').then(result=>{
