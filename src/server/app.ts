@@ -18,7 +18,8 @@ export const BROADCAST = new OBSWebSocket();
                     await BROADCAST.call('SetCurrentProgramScene', {sceneName})
                 }
                 else{
-                    await BROADCAST.call('SetCurrentProgramScene', {sceneName : NEXT_SCENE.BRIDGE}) // you can cutomize next scene
+                    // you can cutomize next scene
+                    await BROADCAST.call('SetCurrentProgramScene', {sceneName : NEXT_SCENE.BRIDGE})
                 }
             }catch(err){
                 console.error(err)

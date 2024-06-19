@@ -23,8 +23,8 @@ exports.NEXT_SCENE = {
     VIDEO: '카메라 화면 - 풀샷'
 };
 exports.PATH = {
-    BRIDGE: 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/230818 - Junction Asia/temp/브릿지영상',
-    VIDEO: 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/230818 - Junction Asia/temp/루핑영상'
+    BRIDGE: 'C:/Users/snuli/Desktop/SNULIVE/업무/2023/231030 - 서울대 제도혁신위원회/디자인/출력/간지',
+    VIDEO: 'C:/Users/snuli/Desktop/SNULIVE/업무/2024/240531 - KOSSDA 공모전/편집/footages/intros/outputs'
 };
 exports.INPUT_TYPE = {
     BRIDGE: 'image_source',
