@@ -27,6 +27,34 @@ exports.BROADCAST = new obs_websocket_js_1.default();
                 console.error(err);
             }
         });
+        exports.LED.on('ConnectionClosed', () => {
+            const connectionInterval = setInterval(async () => {
+                try {
+                    await exports.LED.connect(constants_1.ADDRESS.LED, constants_1.PASSWORD.LED);
+                    console.log('led-connection success!');
+                }
+                catch (err) {
+                    console.log('led-connection failed');
+                }
+                finally {
+                    clearInterval(connectionInterval);
+                }
+            }, 5000);
+        });
+        exports.BROADCAST.on('ConnectionClosed', () => {
+            const connectionInterval = setInterval(async () => {
+                try {
+                    await exports.BROADCAST.connect(constants_1.ADDRESS.BROADCAST, constants_1.PASSWORD.BROADCAST);
+                    console.log('broadcast-connection success!');
+                }
+                catch (err) {
+                    console.log('broadcast-connection failed');
+                }
+                finally {
+                    clearInterval(connectionInterval);
+                }
+            }, 5000);
+        });
     }
     catch (err) {
         console.error(err);

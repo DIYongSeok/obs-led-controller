@@ -25,9 +25,33 @@ export const BROADCAST = new OBSWebSocket();
                 console.error(err)
             }
         })
+
+        LED.on('ConnectionClosed', ()=>{
+            const connectionInterval = setInterval(async ()=>{
+                try{
+                    await LED.connect(ADDRESS.LED, PASSWORD.LED)
+                    console.log('led-connection success!')
+                }catch(err){
+                    console.log('led-connection failed')
+                }finally{
+                    clearInterval(connectionInterval)
+                }
+            },5000)
+        })
+        BROADCAST.on('ConnectionClosed', ()=>{
+            const connectionInterval = setInterval(async ()=>{
+                try{
+                    await BROADCAST.connect(ADDRESS.BROADCAST, PASSWORD.BROADCAST)
+                    console.log('broadcast-connection success!')
+                }catch(err){
+                    console.log('broadcast-connection failed')
+                }finally{
+                    clearInterval(connectionInterval)
+                }
+            },5000)
+        })
     }catch(err){console.error(err)}
 })()
-
 
 export const SceneGenerator = async (OBS : OBSWebSocket)=>{
     const data = await OBS.call('GetSceneList')
