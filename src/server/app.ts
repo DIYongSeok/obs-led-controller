@@ -8,7 +8,22 @@ import {ADDRESS, PASSWORD, PORT} from './util/constants'
 export const BROADCAST = new OBSWebSocket();
 (async function init(){
     try{
-        await BROADCAST.connect(ADDRESS.BROADCASAT, PASSWORD.BROADCAST)
+        await BROADCAST.connect(ADDRESS.BROADCAST, PASSWORD.BROADCAST)
+
+        BROADCAST.on('ConnectionClosed', () => {
+            const connectionInterval = setInterval(async () => {
+                try {
+                    await BROADCAST.connect(ADDRESS.BROADCAST, PASSWORD.BROADCAST);
+                    console.log('broadcast-connection success!');
+                }
+                catch (err) {
+                    console.log('broadcast-connection failed');
+                }
+                finally {
+                    clearInterval(connectionInterval);
+                }
+            }, 5000);
+        });
     }catch(err){console.error(err)}
     
 })()

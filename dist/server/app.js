@@ -10,7 +10,21 @@ const constants_1 = require("./util/constants");
 exports.BROADCAST = new obs_websocket_js_1.default();
 (async function init() {
     try {
-        await exports.BROADCAST.connect(constants_1.ADDRESS.BROADCASAT, constants_1.PASSWORD.BROADCAST);
+        await exports.BROADCAST.connect(constants_1.ADDRESS.BROADCAST, constants_1.PASSWORD.BROADCAST);
+        exports.BROADCAST.on('ConnectionClosed', () => {
+            const connectionInterval = setInterval(async () => {
+                try {
+                    await exports.BROADCAST.connect(constants_1.ADDRESS.BROADCAST, constants_1.PASSWORD.BROADCAST);
+                    console.log('broadcast-connection success!');
+                }
+                catch (err) {
+                    console.log('broadcast-connection failed');
+                }
+                finally {
+                    clearInterval(connectionInterval);
+                }
+            }, 5000);
+        });
     }
     catch (err) {
         console.error(err);

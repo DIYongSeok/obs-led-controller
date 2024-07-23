@@ -1,5 +1,5 @@
 export declare const ADDRESS: {
-    BROADCASAT: string;
+    BROADCAST: string;
 };
 export declare const PASSWORD: {
     BROADCAST: string;

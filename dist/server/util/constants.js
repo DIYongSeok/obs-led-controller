@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PORT = exports.PASSWORD = exports.ADDRESS = void 0;
 exports.ADDRESS = {
-    BROADCASAT: 'ws://localhost:4444',
+    BROADCAST: 'ws://localhost:4444',
 };
 exports.PASSWORD = {
     BROADCAST: 'snulive'
