@@ -46,7 +46,7 @@ export const INPUT_TYPE: { [key in TYPE_OF_SCENE]: string } = {
 export const EDIT_POINTER = {
   NAME: 'editPointer.wav',
   PATH: 'C:/Users/snuli/Desktop/SNULIVE/Footage/Sound Effects/MA_MotionAudio_MagicStardust_01.wav',
-  TIME: 3000,
+  TIME: 1000,
   TRACK: {
     '1': false,
     '2': false,

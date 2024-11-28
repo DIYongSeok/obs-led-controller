@@ -33,7 +33,7 @@ exports.INPUT_TYPE = {
 exports.EDIT_POINTER = {
     NAME: 'editPointer.wav',
     PATH: 'C:/Users/snuli/Desktop/SNULIVE/Footage/Sound Effects/MA_MotionAudio_MagicStardust_01.wav',
-    TIME: 3000,
+    TIME: 1000,
     TRACK: {
         '1': false,
         '2': false,
