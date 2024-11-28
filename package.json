@@ -22,27 +22,35 @@
     "ts-loader": "^9.4.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.9.0",
     "@types/express": "^4.17.13",
     "@types/jquery": "^3.5.14",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
     "@types/styled-components": "^5.1.26",
+    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/parser": "^8.16.0",
     "babel-core": "6.26.3",
     "babel-loader": "8.2.3",
     "babel-preset-react-app": "10.0.1",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-scope": "^8.2.0",
     "nodemon": "^2.0.15",
     "typescript": "^4.9.3",
+    "typescript-eslint": "^8.2.0",
     "webpack": "^5.66.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.11.1"
   },
   "scripts": {
-    "start": "node ./dist/server/app.js",
-    "client": "npx webpack",
-    "server": "npx tsc && nodemon ./dist/server/app.js",
-    "BackEnd": "npx tsc && nodemon ./dist/server/app.js",
-    "dev": "webpack serve --mode=development --hot",
-    "build": "npx tsc && npx webpack",
-    "watch": "npx tsc -w"
+    "start": "concurrently \"npm run server\" \"npm run dev\" \"npm run watch\"",
+    "server": "cd src/server && npx tsc && cd ../../dist/server && nodemon app.js",
+    "watch": "cd src/server && npx tsc && npx tsc -w",
+    "dev": "cd src/client && webpack serve --mode=development --hot",
+    "build": "cd src/server && npx tsc && cd ../client && npx webpack"
   }
 }

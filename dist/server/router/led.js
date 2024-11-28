@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const router = express.Router();
 const app_1 = require("../app");
+const router = express.Router();
 router.get('/', (req, res, next) => {
     res.render('index', { reactFile: 'led' });
 });
@@ -14,7 +14,7 @@ router.post('/set', async (req, res, next) => {
     const { scene } = req.body;
     try {
         await app_1.LED.call('SetCurrentProgramScene', {
-            "sceneName": scene
+            sceneName: scene,
         });
         res.send(true);
     }

@@ -1,0 +1,14 @@
+{
+  "include": ["./**/*"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2018",
+    "outDir": "../../dist/server",
+    "removeComments": true,
+    "noImplicitAny": false,
+    "allowJs": true,
+    "declaration": true,
+    "strictNullChecks": false
+  }
+}

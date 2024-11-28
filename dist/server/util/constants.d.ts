@@ -11,7 +11,7 @@ export declare const PORT: {
     WEBSOCKET: number;
     WEBPACK: number;
 };
-export type TYPE_OF_SCENE = "BRIDGE" | "VIDEO";
+export type TYPE_OF_SCENE = 'BRIDGE' | 'VIDEO';
 export declare const SCENE_TYPE: {
     [key in TYPE_OF_SCENE]: TYPE_OF_SCENE;
 };
