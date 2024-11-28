@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.INPUT_TYPE = exports.PATH = exports.NEXT_SCENE = exports.SCENE_TYPE = exports.PORT = exports.PASSWORD = exports.ADDRESS = void 0;
+exports.EDIT_POINTER = exports.INPUT_TYPE = exports.PATH = exports.NEXT_SCENE = exports.SCENE_TYPE = exports.PORT = exports.PASSWORD = exports.ADDRESS = void 0;
 exports.ADDRESS = {
     BROADCAST: 'ws://localhost:4444',
     LED: 'ws://localhost:5555',
@@ -29,4 +29,17 @@ exports.PATH = {
 exports.INPUT_TYPE = {
     BRIDGE: 'image_source',
     VIDEO: 'ffmpeg_source',
+};
+exports.EDIT_POINTER = {
+    NAME: 'editPointer.wav',
+    PATH: 'C:/Users/snuli/Desktop/SNULIVE/Footage/Sound Effects/MA_MotionAudio_MagicStardust_01.wav',
+    TIME: 3000,
+    TRACK: {
+        '1': false,
+        '2': false,
+        '3': true,
+        '4': false,
+        '5': false,
+        '6': false,
+    },
 };

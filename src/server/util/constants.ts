@@ -42,3 +42,17 @@ export const INPUT_TYPE: { [key in TYPE_OF_SCENE]: string } = {
   BRIDGE: 'image_source',
   VIDEO: 'ffmpeg_source',
 };
+
+export const EDIT_POINTER = {
+  NAME: 'editPointer.wav',
+  PATH: 'C:/Users/snuli/Desktop/SNULIVE/Footage/Sound Effects/MA_MotionAudio_MagicStardust_01.wav',
+  TIME: 3000,
+  TRACK: {
+    '1': false,
+    '2': false,
+    '3': true,
+    '4': false,
+    '5': false,
+    '6': false,
+  },
+};

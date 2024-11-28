@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { PORT, SCENE_TYPE } from '../server/util/constants';
@@ -87,6 +87,26 @@ function Controller() {
             {key}
           </StyledButton>
         ))}
+        <BottomLine
+          width="300px"
+          style={{
+            borderWidth: '1px',
+            borderColor: 'white',
+            margin: '30px 30px',
+          }}
+        />
+        <StyledButton
+          onClick={async (e) => {
+            try {
+              await axios.get('/broadcast/edit-point');
+            } catch (err) {
+              alert('편집점 표시 실패');
+            }
+          }}
+          style={{ margin: '30px 0' }}
+        >
+          편집점{' '}
+        </StyledButton>
       </StyledDiv>
       <StyledDiv>
         <Music />
