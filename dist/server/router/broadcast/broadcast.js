@@ -40,13 +40,18 @@ router.get('/edit-point', async (req, res) => {
         const currentSceneData = await app_1.BROADCAST.call('GetCurrentProgramScene');
         const currentSceneName = currentSceneData.currentProgramSceneName;
         const editPointerSourceName = edit_pointer_1.EDIT_POINTER.NAME;
-        await app_1.BROADCAST.call('CreateInput', {
+        const { sceneItemId } = await app_1.BROADCAST.call('CreateInput', {
             sceneName: currentSceneName,
             inputKind: 'ffmpeg_source',
             inputName: editPointerSourceName,
             inputSettings: {
                 local_file: path_1.PATH.EDIT_POINTER,
             },
+        });
+        await app_1.BROADCAST.call('SetSceneItemIndex', {
+            sceneName: currentSceneName,
+            sceneItemId,
+            sceneItemIndex: 0,
         });
         await app_1.BROADCAST.call('SetInputAudioTracks', {
             inputName: editPointerSourceName,

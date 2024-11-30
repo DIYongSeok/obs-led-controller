@@ -45,13 +45,20 @@ router.get('/edit-point', async (req, res) => {
 
     // editPointer.wav를 현재 장면에 추가
     const editPointerSourceName = EDIT_POINTER.NAME;
-    await BROADCAST.call('CreateInput', {
+    const { sceneItemId } = await BROADCAST.call('CreateInput', {
       sceneName: currentSceneName,
       inputKind: 'ffmpeg_source', // ffmpeg_source는 미디어 파일에 사용
       inputName: editPointerSourceName,
       inputSettings: {
         local_file: PATH.EDIT_POINTER, // 적절한 파일 경로 입력
       },
+    });
+
+    // 아이템을 가장 하단으로 이동 (sceneItemIndex를 가장 작은 값으로 설정)
+    await BROADCAST.call('SetSceneItemIndex', {
+      sceneName: currentSceneName,
+      sceneItemId,
+      sceneItemIndex: 0,
     });
 
     // editPointer.wav의 트랙을 3으로 설정
