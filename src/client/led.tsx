@@ -1,8 +1,9 @@
 import axios from 'axios';
-import React, { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
-import { PORT, SCENE_TYPE } from '../server/util/constants';
+import { PORT } from '../server/constant/port';
+import { SCENE_TYPE } from '../server/constant/types';
 import Music from './music';
 import { BottomLine } from './util/bottom-line';
 import { color } from './util/define';
