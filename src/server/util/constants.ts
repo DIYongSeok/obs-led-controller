@@ -56,3 +56,10 @@ export const EDIT_POINTER = {
     '6': false,
   },
 };
+
+export const NAMETAG = {
+  PATH: 'C:/Users/snuli/Desktop/SNULIVE/업무/2024/241118 - 제도혁신위원회/design/outputs/nametag',
+  DUPLICATE_SCENE_NAME: '대기화면',
+  NEW_SCENE_NAME: '네임태그',
+  NAME: 'nametag',
+};

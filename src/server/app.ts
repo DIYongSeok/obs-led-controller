@@ -1,18 +1,17 @@
 import axios from 'axios';
 import * as express from 'express';
-import * as fs from 'fs';
 import * as nunjucks from 'nunjucks';
 import OBSWebSocket from 'obs-websocket-js';
 import * as path from 'path';
 import {
   ADDRESS,
-  INPUT_TYPE,
   NEXT_SCENE,
   PASSWORD,
-  PATH,
   PORT,
   SCENE_TYPE,
 } from './util/constants';
+const TARGET = process.env.npm_lifecycle_event;
+const app = express();
 
 export const LED = new OBSWebSocket();
 export const BROADCAST = new OBSWebSocket();
@@ -68,48 +67,7 @@ export const BROADCAST = new OBSWebSocket();
   } catch (err) {
     console.log('obs-led connection failed');
   }
-})(); //
-
-export const SceneGenerator = async (OBS: OBSWebSocket) => {
-  const data = await OBS.call('GetSceneList');
-  let scenes = data.scenes.map((val) => val.sceneName) as string[];
-  let deleteSceneList = scenes.filter((val) => val.includes(SCENE_TYPE.BRIDGE));
-  for (let key of Object.keys(PATH)) {
-    try {
-      for (let fileName of fs.readdirSync(PATH[key])) {
-        const sceneName = `[${key}] ${fileName.split('.')[0]}`;
-        deleteSceneList = deleteSceneList.filter((val) => val != sceneName);
-        if (scenes.includes(sceneName)) continue;
-        await OBS.call('CreateScene', {
-          sceneName: sceneName,
-        });
-        scenes = [sceneName, ...scenes];
-        await OBS.call('CreateInput', {
-          sceneName: sceneName,
-          inputName: fileName,
-          inputKind: INPUT_TYPE[key],
-          inputSettings: {
-            file: `${PATH[key]}/${fileName}`,
-            local_file: `${PATH[key]}/${fileName}`,
-          },
-        });
-        //BROADCAST needs creation of sound source
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  for (let deleteScene of deleteSceneList) {
-    try {
-      await OBS.call('RemoveScene', { sceneName: deleteScene });
-      scenes = scenes.filter((val) => val != deleteScene);
-    } catch (err) {}
-  }
-  return scenes;
-};
-const TARGET = process.env.npm_lifecycle_event;
-const app = express();
+})();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

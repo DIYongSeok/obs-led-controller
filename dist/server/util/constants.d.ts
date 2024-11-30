@@ -37,3 +37,9 @@ export declare const EDIT_POINTER: {
         '6': boolean;
     };
 };
+export declare const NAMETAG: {
+    PATH: string;
+    DUPLICATE_SCENE_NAME: string;
+    NEW_SCENE_NAME: string;
+    NAME: string;
+};

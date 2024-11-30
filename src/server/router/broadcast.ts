@@ -1,6 +1,8 @@
 import * as express from 'express';
+import * as fs from 'fs';
 import { BROADCAST } from '../app';
-import { EDIT_POINTER } from '../util/constants';
+import { CODE } from '../util/code';
+import { EDIT_POINTER, NAMETAG } from '../util/constants';
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
@@ -68,6 +70,48 @@ router.get('/edit-point', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Failed to edit point.');
+  }
+});
+
+router.get('/nametag-generate', async (req, res) => {
+  try {
+    //#region Scene Copy
+    // 1. 기존 장면의 아이템 가져오기
+    const sceneItems = await BROADCAST.call('GetSceneItemList', {
+      sceneName: NAMETAG.DUPLICATE_SCENE_NAME,
+    });
+    // 2. 새로운 장면 생성
+    await BROADCAST.call('CreateScene', {
+      sceneName: NAMETAG.NEW_SCENE_NAME,
+    });
+
+    // 3. 기존 장면의 아이템 복사
+    for (const item of sceneItems.sceneItems) {
+      await BROADCAST.call('DuplicateSceneItem', {
+        sceneName: NAMETAG.DUPLICATE_SCENE_NAME as string,
+        sceneItemId: item.sceneItemId as number,
+        destinationSceneName: NAMETAG.NEW_SCENE_NAME,
+      });
+    }
+    //#endregion
+
+    //duplicate한 scene에 nametag이미지들 비활성화 한 채로 넣기
+    for (let fileName of fs.readdirSync(NAMETAG.PATH)) {
+      await BROADCAST.call('CreateInput', {
+        sceneName: NAMETAG.NEW_SCENE_NAME,
+        inputName: fileName,
+        inputKind: 'image_source',
+        sceneItemEnabled: false,
+        inputSettings: {
+          file: `${NAMETAG.PATH}/${fileName}`,
+          local_file: `${NAMETAG.PATH}/${fileName}`,
+        },
+      });
+      //BROADCAST needs creation of sound source
+    }
+    res.status(CODE.OK).send('generating nametag success!');
+  } catch (err) {
+    res.status(CODE.INTERNAL_SERVER_ERROR).send('generating nametag failed');
   }
 });
 

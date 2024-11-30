@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EDIT_POINTER = exports.INPUT_TYPE = exports.PATH = exports.NEXT_SCENE = exports.SCENE_TYPE = exports.PORT = exports.PASSWORD = exports.ADDRESS = void 0;
+exports.NAMETAG = exports.EDIT_POINTER = exports.INPUT_TYPE = exports.PATH = exports.NEXT_SCENE = exports.SCENE_TYPE = exports.PORT = exports.PASSWORD = exports.ADDRESS = void 0;
 exports.ADDRESS = {
     BROADCAST: 'ws://localhost:4444',
     LED: 'ws://localhost:5555',
@@ -42,4 +42,10 @@ exports.EDIT_POINTER = {
         '5': false,
         '6': false,
     },
+};
+exports.NAMETAG = {
+    PATH: 'C:/Users/snuli/Desktop/SNULIVE/업무/2024/241118 - 제도혁신위원회/design/outputs/nametag',
+    DUPLICATE_SCENE_NAME: '대기화면',
+    NEW_SCENE_NAME: '네임태그',
+    NAME: 'nametag',
 };

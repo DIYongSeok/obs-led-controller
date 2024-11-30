@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const fs = require("fs");
 const app_1 = require("../app");
+const code_1 = require("../util/code");
 const constants_1 = require("../util/constants");
 const router = express.Router();
 router.get('/', (req, res, next) => {
@@ -53,6 +55,39 @@ router.get('/edit-point', async (req, res) => {
     catch (error) {
         console.error(error);
         res.status(500).send('Failed to edit point.');
+    }
+});
+router.get('/nametag-generate', async (req, res) => {
+    try {
+        const sceneItems = await app_1.BROADCAST.call('GetSceneItemList', {
+            sceneName: constants_1.NAMETAG.DUPLICATE_SCENE_NAME,
+        });
+        await app_1.BROADCAST.call('CreateScene', {
+            sceneName: constants_1.NAMETAG.NEW_SCENE_NAME,
+        });
+        for (const item of sceneItems.sceneItems) {
+            await app_1.BROADCAST.call('DuplicateSceneItem', {
+                sceneName: constants_1.NAMETAG.DUPLICATE_SCENE_NAME,
+                sceneItemId: item.sceneItemId,
+                destinationSceneName: constants_1.NAMETAG.NEW_SCENE_NAME,
+            });
+        }
+        for (let fileName of fs.readdirSync(constants_1.NAMETAG.PATH)) {
+            await app_1.BROADCAST.call('CreateInput', {
+                sceneName: constants_1.NAMETAG.NEW_SCENE_NAME,
+                inputName: fileName,
+                inputKind: 'image_source',
+                sceneItemEnabled: false,
+                inputSettings: {
+                    file: `${constants_1.NAMETAG.PATH}/${fileName}`,
+                    local_file: `${constants_1.NAMETAG.PATH}/${fileName}`,
+                },
+            });
+        }
+        res.status(code_1.CODE.OK).send('generating nametag success!');
+    }
+    catch (err) {
+        res.status(code_1.CODE.INTERNAL_SERVER_ERROR).send('generating nametag failed');
     }
 });
 exports.default = router;
