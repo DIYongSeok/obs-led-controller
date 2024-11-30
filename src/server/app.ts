@@ -3,13 +3,6 @@ import * as express from 'express';
 import * as nunjucks from 'nunjucks';
 import OBSWebSocket from 'obs-websocket-js';
 import * as path from 'path';
-import {
-  ADDRESS,
-  NEXT_SCENE,
-  PASSWORD,
-  PORT,
-  SCENE_TYPE,
-} from './util/constants';
 const TARGET = process.env.npm_lifecycle_event;
 const app = express();
 
@@ -28,7 +21,7 @@ export const BROADCAST = new OBSWebSocket();
         } finally {
           clearInterval(connectionInterval);
         }
-      }, 5000);
+      }, TIME.TRY_CONNECTION_INTERVAL);
     });
   } catch (err) {
     console.log('obs-broadcast connection failed');
@@ -45,7 +38,7 @@ export const BROADCAST = new OBSWebSocket();
         } else {
           // you can cutomize next scene
           await BROADCAST.call('SetCurrentProgramScene', {
-            sceneName: NEXT_SCENE.BRIDGE,
+            sceneName: NAME.NEXT_SCENE.BRIDGE,
           });
         }
       } catch (err) {
@@ -62,7 +55,7 @@ export const BROADCAST = new OBSWebSocket();
         } finally {
           clearInterval(connectionInterval);
         }
-      }, 5000);
+      }, TIME.TRY_CONNECTION_INTERVAL);
     });
   } catch (err) {
     console.log('obs-led connection failed');
@@ -98,7 +91,7 @@ app.use('/image', (req, res, next) => {
 });
 
 //LED control
-import broadcast from './router/broadcast';
+import broadcast from './router/broadcast/broadcast';
 import led from './router/led';
 import music from './router/music';
 app.use('/led', led);
@@ -108,6 +101,11 @@ app.use('/music', music);
 app.listen(PORT.SERVER, () => {});
 
 import { WebSocketServer } from 'ws';
+import { ADDRESS, PASSWORD } from './constant/address';
+import { NAME } from './constant/modify/name';
+import { PORT } from './constant/port';
+import { TIME } from './constant/time';
+import { SCENE_TYPE } from './constant/types';
 const wsBroadcast = new WebSocketServer({ port: PORT.WEBSOCKET });
 wsBroadcast.on('connection', (ws, req) => {
   if (req.url.includes('broadcast')) {
