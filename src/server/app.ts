@@ -3,6 +3,11 @@ import * as express from 'express';
 import * as nunjucks from 'nunjucks';
 import OBSWebSocket from 'obs-websocket-js';
 import * as path from 'path';
+import { ADDRESS, PASSWORD } from './constant/address';
+import { NAME } from './constant/modify/name';
+import { PORT } from './constant/port';
+import { TIME } from './constant/time';
+import { SCENE_TYPE } from './constant/types';
 const TARGET = process.env.npm_lifecycle_event;
 const app = express();
 
@@ -101,11 +106,6 @@ app.use('/music', music);
 app.listen(PORT.SERVER, () => {});
 
 import { WebSocketServer } from 'ws';
-import { ADDRESS, PASSWORD } from './constant/address';
-import { NAME } from './constant/modify/name';
-import { PORT } from './constant/port';
-import { TIME } from './constant/time';
-import { SCENE_TYPE } from './constant/types';
 const wsBroadcast = new WebSocketServer({ port: PORT.WEBSOCKET });
 wsBroadcast.on('connection', (ws, req) => {
   if (req.url.includes('broadcast')) {

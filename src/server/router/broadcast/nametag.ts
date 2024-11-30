@@ -43,6 +43,7 @@ router.get('/generate', async (req, res) => {
     }
     res.status(CODE.OK).json({ message: 'generating nametag success!' });
   } catch (err) {
+    console.error(err);
     res
       .status(CODE.INTERNAL_SERVER_ERROR)
       .json({ message: 'generating nametag failed' });

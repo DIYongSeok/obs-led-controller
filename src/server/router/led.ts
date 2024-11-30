@@ -46,7 +46,7 @@ export const sceneGenerator = async (OBS: OBSWebSocket) => {
         }
       }
     } catch (err) {
-      throw err;
+      console.error(err);
     }
   }
 
@@ -55,7 +55,7 @@ export const sceneGenerator = async (OBS: OBSWebSocket) => {
       await OBS.call('RemoveScene', { sceneName: deleteScene });
       scenes = scenes.filter((val) => val != deleteScene);
     } catch (err) {
-      throw err;
+      console.error(err);
     }
   }
 
