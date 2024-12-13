@@ -3,7 +3,7 @@ import * as express from 'express';
 import * as nunjucks from 'nunjucks';
 import OBSWebSocket from 'obs-websocket-js';
 import * as path from 'path';
-import { ADDRESS, PASSWORD } from './constant/address';
+import { ADDRESS, PASSWORD } from './constant/modify/address';
 import { NAME } from './constant/modify/name';
 import { PORT } from './constant/port';
 import { TIME } from './constant/time';
