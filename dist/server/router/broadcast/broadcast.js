@@ -28,6 +28,7 @@ router.post('/set', async (req, res) => {
         await app_1.BROADCAST.call('SetCurrentProgramScene', {
             sceneName: scene,
         });
+        res.json({ message: 'Successfully set the scene' });
     }
     catch (err) {
         res

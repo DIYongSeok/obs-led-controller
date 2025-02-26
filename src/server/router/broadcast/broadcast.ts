@@ -30,6 +30,7 @@ router.post('/set', async (req, res) => {
     await BROADCAST.call('SetCurrentProgramScene', {
       sceneName: scene,
     });
+    res.json({ message: 'Successfully set the scene' });
   } catch (err) {
     res
       .status(CODE.INTERNAL_SERVER_ERROR)
